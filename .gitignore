@@ -58,4 +58,11 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+#---------------------------
+
+# User based VS settings
 .vsconfig
+
+# User based Unity Editor settings
+/UserSettings/
+
