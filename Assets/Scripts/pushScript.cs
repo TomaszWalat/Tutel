@@ -4,22 +4,17 @@ using UnityEngine;
 
 public class pushScript : MonoBehaviour
 {
+    //Grab range is how far the ray cast detects anything || The offset ofsets the ray form the player's centre || pushForce is obvious
     public float grabRange = 2f;
     public Vector3 offset = new Vector3(0f, -0.5f, 0f);
-    public float pushForce = 10f;
+    public float pushForce = 1000f;
 
     Vector3 collision = Vector3.zero;
-    
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
+        //Checks if the action button form the input manager is hit (Default should be E or A on a controller)
         if (Input.GetButtonDown("action button"))
         {
             var ray = new Ray(transform.position + offset, transform.forward);
@@ -28,10 +23,14 @@ public class pushScript : MonoBehaviour
             {
                 if (hit.transform.gameObject.tag == "pushBlock")
                 {
+                    //Moves the green gizmo sphere to where the raycast hit
+                    //Determines the direction of the player from where the raycast hit
+                    //Determines the direction the block should be pushed using the player's direction and the raycast point
                     collision = hit.point;
                     Vector3 playerDir = hit.point - transform.position;
                     Vector3 reflection = Vector3.Reflect(playerDir, hit.normal);
 
+                    //Adds the push force
                     hit.rigidbody.AddForce(-reflection * pushForce * Time.deltaTime, ForceMode.Impulse);
                 }
             }
@@ -39,6 +38,7 @@ public class pushScript : MonoBehaviour
         
     }
 
+    //Draws a green sphere gizmo for debugging
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
