@@ -3,22 +3,7 @@ guid: 5ac2d4b18980ee545ac183831507d13e
 ModelImporter:
   serializedVersion: 21100
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: BrickBrick
-    second: {fileID: 2100000, guid: 21781f281fb7b0a47b580153d6c2d07a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DampBrick
-    second: {fileID: 2100000, guid: 083ff45b951d6e74e852e467445e3ac4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DarkBrick
-    second: {fileID: 2100000, guid: fb922c038c36e7440a8f6fddbab3043c, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

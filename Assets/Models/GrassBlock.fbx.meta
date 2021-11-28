@@ -3,27 +3,7 @@ guid: 3360df80b1701ac4f82ad63e0ca4a7b8
 ModelImporter:
   serializedVersion: 21100
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DirtDark
-    second: {fileID: 2100000, guid: 5ab6263474714b7429f9230669616e75, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DirtLight
-    second: {fileID: 2100000, guid: c2dade3e9c2a22b4eb7b333ea6b1ee22, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: GrassDark
-    second: {fileID: 2100000, guid: fdb0d0cc43aa0b84dbf4cd90da2731fd, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: GrassLight
-    second: {fileID: 2100000, guid: 815debd59d790e140ab9d5b4942971dc, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
