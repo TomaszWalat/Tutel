@@ -1,0 +1,1 @@
+remove mesh renderer on tilemapbuilder
