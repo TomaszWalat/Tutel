@@ -6,41 +6,54 @@ using UnityEngine;
 public class CameraGimbalControlller : MonoBehaviour
 {
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Centre of rotation for the gimbal")]
     private Transform anchorPoint;
 
-    [SerializeField] [Tooltip("Amount to rotate by each late update")]
+    [SerializeField] [Tooltip("(DEBUG OBJECT) Object visualising the inverse behaviour of the gimbal relative to the anchor - useful is gimbal rotation radius is negative")]
+    private GameObject counterWeight;
+
+    [SerializeField] [Tooltip("Horizontal rotation speed")]
     private float rotationSpeedY; // should maybe be called rotation speed - should X and Y have separate speeds?
 
-    [SerializeField] [Tooltip("Amount to rotate by each late update")]
+    [SerializeField] [Tooltip("Verical rotation speed")]
     private float rotationSpeedX; // should maybe be called rotation speed - should X and Y have separate speeds?
 
-    [SerializeField] [Tooltip(" Rotation smoothing")]
+    [SerializeField] [Tooltip("Rotation speed smoothing value")]
     private float smoothing;
 
-    [SerializeField] [Range(-180, 180)]
+    [SerializeField] [Range(-180, 180)] [Tooltip("Horizontal rotation cap anti-clock wise from anchor's forward direction")]
     private float rotationCapY_left;
 
-    [SerializeField] [Range(-180, 180)]
+    [SerializeField] [Range(-180, 180)] [Tooltip("Horizontal rotation cap clock wise from anchor's forward direction")]
     private float rotationCapY_right;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("(DEBUG INFO) Internal value of anti-clock wise Y cap")]
     private float realRotCapY_left;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("(DEBUG INFO) Internal value of clock wise Y cap")]
     private float realRotCapY_right;
 
-    [SerializeField] [Range(-90, 90)]
+    [SerializeField] [Range(-90, 90)] [Tooltip("Vertical rotation cap anti-clock wise from anchor's forward direction")]
     private float rotationCapX_upper;
 
-    [SerializeField] [Range(-90, 90)]
+    [SerializeField] [Range(-90, 90)] [Tooltip("Vertical rotation cap clock wise from anchor's forward direction")]
     private float rotationCapX_lower;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("(DEBUG INFO) Internal value of anti-clock wise X cap. Clamped (-1) to prevent gimbal from aligning its Z axis with anchor Y axis - causes strange behaviour")]
     private float realRotCapX_upper;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("(DEBUG INFO) Internal value of clock wise X cap, Clamped (+1) to prevent gimbal from aligning its Z axis with anchor Y axis - causes strange behaviour")]
     private float realRotCapX_lower;
+
+    [SerializeField] [Tooltip("(DEBUG INFO) The radius of the gimbal's rotation sphere (i.e. distance from the anchor). Negative distance inverts the X and Y caps")]
+    private float rotationRadius;
+
+    [SerializeField] [Tooltip("Furthest the gimbal can move forward - acts as maximum distance from anchor if positive, minimum if negative")]
+    private float rotRadiusCapForward;
+
+    [SerializeField] [Tooltip("Furthest the gimbal can move backward - acts as minimum distance from anchor if positive, maximum if negative")]
+    private float rotRadiusCapBackward;
+
 
 
     private Transform m_transform;
@@ -66,6 +79,9 @@ public class CameraGimbalControlller : MonoBehaviour
         }
 
         m_transform = gameObject.transform;
+
+        rotationRadius = 0.0f;
+        UpdateRadius(-10.0f);
     }
 
     void FixedUpdate()
@@ -79,6 +95,11 @@ public class CameraGimbalControlller : MonoBehaviour
         if (rotationCapX_upper < rotationCapX_lower)
         {
             rotationCapX_upper = rotationCapX_lower;
+        }
+
+        if (rotRadiusCapForward < rotRadiusCapBackward)
+        {
+            rotRadiusCapBackward = rotRadiusCapForward;
         }
 
         if (rotationCapY_left > 0.0f)
@@ -138,24 +159,33 @@ public class CameraGimbalControlller : MonoBehaviour
     {
         if (Input.GetKey("right"))
         {
-            Rotate(0.0f, -rotationSpeedY);
+            RotateBy(0.0f, -rotationSpeedY);
         }
         else if (Input.GetKey("left"))
         {
-            Rotate(0.0f, rotationSpeedY);
+            RotateBy(0.0f, rotationSpeedY);
         }
 
         if (Input.GetKey("up"))
         {
-            Rotate(rotationSpeedX, 0.0f);
+            RotateBy(rotationSpeedX, 0.0f);
         }
         else if (Input.GetKey("down"))
         {
-            Rotate(-rotationSpeedX, 0.0f);
+            RotateBy(-rotationSpeedX, 0.0f);
+        }
+
+        if (Input.GetKey("."))
+        {
+            UpdateRadius(0.1f);
+        }
+        else if (Input.GetKey(","))
+        {
+            UpdateRadius(-0.1f);
         }
     }
 
-    public void Rotate(float angleAxisX, float angleAxisY)
+    public void RotateBy(float xAxisAngleDelta, float yAxisAngleDelta)
     {
 
         float currentRotationY = m_transform.eulerAngles.y;
@@ -171,18 +201,18 @@ public class CameraGimbalControlller : MonoBehaviour
             formatedRotY = 0.0f - currentRotationY;
         }
 
-        float rotationAmountY = angleAxisY * smoothing * Time.deltaTime;
+        float rotationAmountY = yAxisAngleDelta * smoothing * Time.deltaTime;
 
         // ---------------------------------> WINNER WINNER CHICKEN DINNER! <--------------------------------------------------- //
         if (rotationAmountY > 0.0f && formatedRotY > rotationCapY_right)
         {
             // Rotate around the world Y axis ( Vector3(0, 1, 0) ) -> (this can later be made to rotate around the anchor Y axis by setting the rotationUp to anchorPoint.up)
-            m_transform.RotateAround(anchorPoint.position, rotationUp, angleAxisY * smoothing * Time.deltaTime);
+            m_transform.RotateAround(anchorPoint.position, rotationUp, yAxisAngleDelta * smoothing * Time.deltaTime);
         }
         else if (rotationAmountY < 0.0f && formatedRotY < rotationCapY_left)
         {
             // Rotate around the world Y axis ( Vector3(0, 1, 0) ) -> (this can later be made to rotate around the anchor Y axis by setting the rotationUp to anchorPoint.up)
-            m_transform.RotateAround(anchorPoint.position, rotationUp, angleAxisY * smoothing * Time.deltaTime);
+            m_transform.RotateAround(anchorPoint.position, rotationUp, yAxisAngleDelta * smoothing * Time.deltaTime);
         }
 
 
@@ -199,20 +229,32 @@ public class CameraGimbalControlller : MonoBehaviour
             formatedRotX = 0.0f - (currentXRotation);
         }
 
-        float rotationAmountX = angleAxisX * smoothing * Time.deltaTime;
+        float rotationAmountX = xAxisAngleDelta * smoothing * Time.deltaTime;
 
         // ---------------------------------> WINNER WINNER CHICKEN DINNER! <--------------------------------------------------- //
         if (rotationAmountX > 0.0f && formatedRotX > (rotationCapX_lower + 1))//< (rotCapUpperX))
         {
             // Rotate around the gimbal X axis at anchor's position (not gimbal's position)
-            m_transform.RotateAround(anchorPoint.position, m_transform.right, angleAxisX * smoothing * Time.deltaTime);
+            m_transform.RotateAround(anchorPoint.position, m_transform.right, xAxisAngleDelta * smoothing * Time.deltaTime);
         }
         else if (rotationAmountX < 0.0f && formatedRotX < (rotationCapX_upper - 1))//> (rotCapLowerX))
         {
             // Rotate around the gimbal X axis at anchor's position (not gimbal's position)
-            m_transform.RotateAround(anchorPoint.position, m_transform.right, angleAxisX * smoothing * Time.deltaTime);
+            m_transform.RotateAround(anchorPoint.position, m_transform.right, xAxisAngleDelta * smoothing * Time.deltaTime);
         }
 
         // m_transform.rotation = Quaternion.Euler(m_transform.eulerAngles.x, m_transform.eulerAngles.y, 0.0f);
+    }
+
+    private void UpdateRadius(float radiusDelta)
+    {
+        if (rotRadiusCapBackward < (rotationRadius + radiusDelta) && (rotationRadius + radiusDelta) < rotRadiusCapForward)
+        {
+            m_transform.Translate(Vector3.forward * radiusDelta, Space.Self);
+
+            counterWeight.transform.Translate(Vector3.forward * (radiusDelta * -2), Space.Self);
+
+            rotationRadius += radiusDelta;
+        }
     }
 }
