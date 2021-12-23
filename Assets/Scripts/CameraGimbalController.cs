@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class CameraGimbalControlller : MonoBehaviour
+public class CameraGimbalController : MonoBehaviour
 {
 
     [SerializeField] [Tooltip("Centre of rotation for the gimbal")]
