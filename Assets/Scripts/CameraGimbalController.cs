@@ -45,7 +45,7 @@ public class CameraGimbalController : MonoBehaviour
     [SerializeField] [Tooltip("(DEBUG INFO) Internal value of clock wise X cap, Clamped (+1) to prevent gimbal from aligning its Z axis with anchor Y axis - causes strange behaviour")]
     private float realRotCapX_lower;
 
-    [SerializeField] [Tooltip("(DEBUG INFO) The radius of the gimbal's rotation sphere (i.e. distance from the anchor). Negative distance inverts the X and Y caps")]
+    [SerializeField] [Tooltip("(VIEW ONLY) The radius of the gimbal's rotation sphere (i.e. distance from the anchor). Negative distance inverts the X and Y caps")]
     private float rotationRadius;
 
     [SerializeField] [Tooltip("Furthest the gimbal can move forward - acts as maximum distance from anchor if positive, minimum if negative")]
