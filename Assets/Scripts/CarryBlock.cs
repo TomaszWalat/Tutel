@@ -26,16 +26,16 @@ public class CarryBlock : MonoBehaviour
     [Header("Player control")]
     public bool slowEnabled = true;
     public float percentageSlowdown = 0.5f;
-    Movement movementScript;
+    //Movement movementScript;
     float startingSpeed;
     float startingRotSpeed;
 
     void Start()
     {
-        //Initialises the variables needed for the slow down
-        movementScript = gameObject.GetComponent<Movement>();
-        startingSpeed = movementScript.speed;
-        startingRotSpeed = movementScript.rotSpeed;
+        ////Initialises the variables needed for the slow down
+        //movementScript = gameObject.GetComponent<Movement>();
+        //startingSpeed = movementScript.speed;
+        //startingRotSpeed = movementScript.rotSpeed;
     }
 
     // Update is called once per frame
@@ -122,13 +122,13 @@ public class CarryBlock : MonoBehaviour
         {
             if(currentlyCarrying == true)
             {
-                movementScript.speed = startingSpeed * percentageSlowdown;
-                movementScript.rotSpeed = startingRotSpeed * percentageSlowdown;
+                //movementScript.speed = startingSpeed * percentageSlowdown;
+                //movementScript.rotSpeed = startingRotSpeed * percentageSlowdown;
             }
             else
             {
-                movementScript.speed = startingSpeed;
-                movementScript.rotSpeed = startingRotSpeed;
+                //movementScript.speed = startingSpeed;
+                //movementScript.rotSpeed = startingRotSpeed;
             }
         }
     }
