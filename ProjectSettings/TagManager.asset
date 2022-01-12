@@ -5,11 +5,15 @@ TagManager:
   serializedVersion: 2
   tags:
   - pushBlock
+  - carryBlock
+  - cameraAnchor
+  - cameraFocus
+  - cameraGimbal
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - CameraSystem
   - Water
   - UI
   - 
