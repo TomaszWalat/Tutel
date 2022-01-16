@@ -6,6 +6,10 @@ TagManager:
   tags:
   - pushBlock
   - GameManager
+  - carryBlock
+  - cameraAnchor
+  - cameraFocus
+  - cameraGimbal
   layers:
   - Default
   - TransparentFX
