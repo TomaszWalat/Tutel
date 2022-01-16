@@ -5,10 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - pushBlock
+  - GameManager
   - carryBlock
   - cameraAnchor
   - cameraFocus
   - cameraGimbal
+  - backgroundMusic
   layers:
   - Default
   - TransparentFX
