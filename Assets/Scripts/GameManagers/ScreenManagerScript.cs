@@ -43,8 +43,8 @@ public class ScreenManagerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sceneName = gameManager.GetCurrentSceneName();
         startingUI.EnableUI();
+        sceneName = gameManager.GetCurrentSceneName();
     }
 
     // Update is called once per frame

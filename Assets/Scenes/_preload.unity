@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8a8e926fc89f7b4b95b0fb53526fabc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenManager: {fileID: 0}
+  screenManager: {fileID: 1322477003}
   uiCanvas: {fileID: 2127476954}
   isActive: 0
 --- !u!4 &1764526619
