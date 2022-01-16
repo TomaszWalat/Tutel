@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
+
+    private static GameManagerScript instance;
+
     // Cross fade
     [SerializeField]
     Animator transition;
@@ -44,7 +47,6 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     bool test3DataLoaded;
 
-    private static GameManagerScript instance;
 
     void Awake()
     {
