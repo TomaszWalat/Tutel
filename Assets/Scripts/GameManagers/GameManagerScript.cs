@@ -23,6 +23,9 @@ public class GameManagerScript : MonoBehaviour
     Scene currentScene;
 
     [SerializeField]
+    string currentSceneName;
+
+    [SerializeField]
     ScreenManagerScript currentScreenManager;
 
     [SerializeField]
@@ -36,6 +39,9 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     bool allDataLoaded;
 
+    [SerializeField]
+    bool allDataUnloaded;
+
     // Deserialisation example flags
     [SerializeField]
     bool test1DataLoaded;
@@ -43,6 +49,14 @@ public class GameManagerScript : MonoBehaviour
     bool test2DataLoaded;
     [SerializeField]
     bool test3DataLoaded;
+
+    // Serialisation example flags
+    [SerializeField]
+    bool test1DataUnloaded;
+    [SerializeField]
+    bool test2DataUnloaded;
+    [SerializeField]
+    bool test3DataUnloaded;
 
 
     void Awake()
@@ -72,6 +86,7 @@ public class GameManagerScript : MonoBehaviour
         loadedScenes = new HashSet<string>();
 
         currentScene = SceneManager.GetActiveScene();
+        currentSceneName = currentScene.name;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -79,9 +94,13 @@ public class GameManagerScript : MonoBehaviour
 
         // --- For testing only --- //
         allDataLoaded = false;
+        allDataUnloaded = false;
         test1DataLoaded = false;
         test2DataLoaded = false;
         test3DataLoaded = false;
+        test1DataUnloaded = false;
+        test2DataUnloaded = false;
+        test3DataUnloaded = false;
 
         // --- For testing only --- //
         StartCoroutine(LoadTest1Data());
@@ -142,7 +161,54 @@ public class GameManagerScript : MonoBehaviour
         //    TryLoadScene("MainMenuScene");
         //}
     }
-    // ----- End of desrialisation example ----- //
+    // ----- End of deserialisation example ----- //
+
+    // ----- Data unloading (serialisation) example ----- //
+    private IEnumerator UnloadTest1Data()
+    {
+        yield return new WaitForEndOfFrame(); // Wait until the end of the frame to start
+
+        yield return new WaitForSeconds(3.5f);
+
+        test1DataUnloaded = true;
+
+        StartCoroutine(CheckDataUnloadingProgress());
+    }
+
+    private IEnumerator UnloadTest2Data()
+    {
+        yield return new WaitForEndOfFrame(); // Wait until the end of the frame to start
+
+        yield return new WaitForSeconds(0.5f);
+
+        test2DataUnloaded = true;
+
+        StartCoroutine(CheckDataUnloadingProgress());
+    }
+
+    private IEnumerator UnloadTest3Data()
+    {
+        yield return new WaitForEndOfFrame(); // Wait until the end of the frame to start
+
+        yield return new WaitForSeconds(2.5f);
+
+        test3DataUnloaded = true;
+
+        StartCoroutine(CheckDataUnloadingProgress());
+    }
+
+    private IEnumerator CheckDataUnloadingProgress()
+    {
+        yield return new WaitForEndOfFrame(); // Wait until the end of the frame to start
+
+        allDataUnloaded = test1DataUnloaded && test2DataUnloaded && test3DataUnloaded;
+
+        if(allDataUnloaded)
+        {
+            ExitApplication();
+        }
+    }
+    // ----- End of serialisation example ----- //
 
 
     // --- For button OnClick() functionallity only --- //
@@ -177,7 +243,7 @@ public class GameManagerScript : MonoBehaviour
 
         if(!isLoadingScene)
         {
-            if(!(loadedScenes.Contains(sceneName)))
+            if (!(loadedScenes.Contains(sceneName)))
             {
                 if (sceneName != currentScene.name)
                 {
@@ -188,9 +254,36 @@ public class GameManagerScript : MonoBehaviour
                     success = true;
                 }
             }
+            else if(sceneName == currentSceneName)
+            {
+                isLoadingScene = true;
+
+                StartCoroutine(ReloadScene());
+
+                success = true;
+            }
         }
 
         return success;
+    }
+
+    IEnumerator ReloadScene()
+    {
+        yield return new WaitForEndOfFrame();
+
+        transition.SetTrigger("Fade_Out"); // Fade to black
+
+        yield return new WaitForSeconds(transitionTime);
+
+        SceneManager.LoadScene(currentSceneName);
+
+        currentScene = SceneManager.GetActiveScene();
+
+        yield return new WaitForSeconds(transitionTime);
+
+        transition.SetTrigger("Fade_In"); // Fade from black
+
+        isLoadingScene = false;
     }
 
     // Changes what scene is active
@@ -234,6 +327,7 @@ public class GameManagerScript : MonoBehaviour
             SceneManager.SetActiveScene(targetScene);
 
             currentScene = targetScene;
+            currentSceneName = currentScene.name;
 
             yield return new WaitForSeconds(transitionTime);
 
@@ -307,7 +401,13 @@ public class GameManagerScript : MonoBehaviour
 
     private void ExitApplication()
     {
+        Debug.Log("Quitting...");
+        Application.Quit();
+    }
 
+    public string GetCurrentSceneName()
+    {
+        return currentSceneName;
     }
 
     // --------------- Event triggers --------------- //
@@ -315,20 +415,32 @@ public class GameManagerScript : MonoBehaviour
     {
         Debug.LogFormat("Active scene change: current ({0}) -> next ({1})", current.name, next.name);
 
-        if(sceneStack.Count > 0)
-        { 
-            if(sceneStack.Peek() == next.name)  // If going back
-            {
-                sceneStack.Pop();
-            }
-        }
-        else                               
+        if (current.name != next.name)
         {
-            sceneStack.Push(current.name);
+
+            if (sceneStack.Count > 0)
+            {
+                if (sceneStack.Peek() == next.name)  // If going back
+                {
+                    sceneStack.Pop();
+                }
+            }
+            else
+            {
+                sceneStack.Push(current.name);
+            }
+
+            StartCoroutine(UnloadLoadSceneInBackground(current.name));
         }
 
-        StartCoroutine(UnloadLoadSceneInBackground(current.name));
         StartCoroutine(FindScreenManager());
+
+        if(next.name == "_unload")
+        {
+            StartCoroutine(UnloadTest1Data());
+            StartCoroutine(UnloadTest2Data());
+            StartCoroutine(UnloadTest3Data());
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

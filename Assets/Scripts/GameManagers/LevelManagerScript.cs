@@ -6,17 +6,12 @@ public class LevelManagerScript : GoalObjectScript
 {
     // Script for level/gameplay related stuff
 
-    private enum LevelState { Loading, Ready, InProgress, Paused, Complete }
+    private enum LevelState { Loading, Ready, InProgress, Paused, Failed, Complete }
+
+    ScreenManagerScript screenManager;
 
     [SerializeField]
     LevelState state = LevelState.Loading;
-
-    [SerializeField]
-    bool levelLoaded;
-
-
-    [SerializeField]
-    bool levelComplete;
 
     // Start is called before the first frame update
     void Start()
@@ -102,6 +97,15 @@ public class LevelManagerScript : GoalObjectScript
             isComplete = childrenComplete;
 
             state = LevelState.Complete;
+
+            screenManager.GoToMenu("VictoryMenu");
         }
+    }
+
+    public void TriggerFailState()
+    {
+        state = LevelState.Failed;
+
+        screenManager.GoToMenu("FailStateMenu");
     }
 }
