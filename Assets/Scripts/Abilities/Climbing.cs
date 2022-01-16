@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Climbing : MonoBehaviour
+public class Climbing : MonoBehaviour,Ability
 {
 
     //Grab range is how far the ray cast detects anything || The offset ofsets the ray form the player's centre || Collision is for the gizmo
