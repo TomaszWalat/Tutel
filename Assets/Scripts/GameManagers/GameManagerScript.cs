@@ -44,20 +44,31 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     bool test3DataLoaded;
 
+    private static GameManagerScript instance;
 
     void Awake()
     {
-        // Find any all objects tagged with GameManager
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("GameManager");
+        //// Find any all objects tagged with GameManager
+        //GameObject[] objects = GameObject.FindGameObjectsWithTag("GameManager");
 
-        if (objects.Length > 1)
+        //if (objects.Length > 1)
+        //{
+            //// If one already exists, destroy self (as you're the duplicate)
+            //Destroy(this.gameObject);
+        //}
+
+        //// Set object to be persisten between scenes
+        //DontDestroyOnLoad(this.gameObject);
+
+        if (instance == null)
         {
-            // If one already exists, destroy self (as you're the duplicate)
-            Destroy(this.gameObject);
+            instance = this;
+            DontDestroyOnLoad(instance);
         }
-
-        // Set object to be persisten between scenes
-        DontDestroyOnLoad(this.gameObject);
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     // Start is called before the first frame update
