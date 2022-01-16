@@ -16,6 +16,7 @@ public class Climbing : MonoBehaviour
     public float climbSpeed = 0.005f;
     public float dropRange = 0.5f;
     private bool climbing;
+    private Transform wall;
 
     //All the variables that I nab from the player objects
     private TurtleController turtCont;
@@ -24,11 +25,12 @@ public class Climbing : MonoBehaviour
     private int groundLayer;
     private int climbPlayerLayer;
 
+
     void Start()
     {
         //Nabs the script that controls the turtle this is on and the character controller.
-        turtCont = gameObject.GetComponent<TurtleController>();
-        charCont = gameObject.GetComponent<CharacterController>();
+        turtCont = transform.parent.gameObject.GetComponent<TurtleController>();
+        charCont = transform.parent.gameObject.GetComponent<CharacterController>();
 
         //Nabs the layer numbers for the default, ground, and climberPlayer, just in case it gets messed up by something or someone
         defaultLayer = LayerMask.NameToLayer("Default");
@@ -53,16 +55,26 @@ public class Climbing : MonoBehaviour
                         collision = hit.point;
 
                         //Disables the character controller, sets its colission to the ClimbingPLayer
-                        gameObject.layer = climbPlayerLayer;
+                        transform.parent.gameObject.layer = climbPlayerLayer;
                         turtCont.enabled = false;
                         climbing = true;
+
+                        //Makes the player perpendicular to the wall in the Z axis
+                        Vector3 difference = hit.transform.position - transform.position;
+                        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+                        rotZ = Mathf.Round(rotZ / 90) * 90;
+                        transform.rotation = Quaternion.Euler(0f, 0f, rotZ);
+
+                        //Saves the wall transform
+                        wall = hit.transform;
+
                     }
                 }
             }
             else
             {
                 //Casts a ray downwards to check if there's ground before dropping the player off the wall
-                var ray = new Ray(transform.position + offset, -transform.up);
+                var ray = new Ray(transform.parent.position, -transform.parent.up);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, dropRange))
                 {
@@ -70,8 +82,8 @@ public class Climbing : MonoBehaviour
                     {
                         collision = hit.point;
 
-                        //Disables the character controller, sets its colission to the Default
-                        gameObject.layer = defaultLayer;
+                        //Disables the character controller, sets its collision to the Default
+                        transform.parent.gameObject.layer = defaultLayer;
                         turtCont.enabled = true;
                         climbing = false;
                     }
@@ -87,10 +99,19 @@ public class Climbing : MonoBehaviour
         //Uses the character controller to move the player vertically
         if (climbing)
         {
-            float hIn = Input.GetAxis("Horizontal");
-            float vIn = Input.GetAxis("Vertical");
+            float vert = Input.GetAxis("Vertical");
+            Vector3 movDir = new Vector3(0, vert, 0);
 
-            Vector3 movDir = new Vector3(hIn, vIn, 0);
+            if (Input.GetAxis("Horizontal") > 0)
+            {
+                movDir += wall.forward;
+            }
+            else if (Input.GetAxis("Horizontal") < 0)
+            {
+                movDir -= wall.forward;
+            }
+
+            
             float magnitude = Mathf.Clamp01(movDir.magnitude) * climbSpeed;
             movDir.Normalize();
 
