@@ -10,6 +10,7 @@ TagManager:
   - cameraAnchor
   - cameraFocus
   - cameraGimbal
+  - backgroundMusic
   layers:
   - Default
   - TransparentFX
