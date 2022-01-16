@@ -6,18 +6,30 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/_preload.unity
+    guid: 5f3c76fcb72615c4ebfe5dbee73e26ff
+  - enabled: 1
     path: Assets/Scenes/MainMenuScene.unity
     guid: a94b6ab8d4192e842be3151b067792cb
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/SceneManagerTest.unity
-    guid: a1e310ad0f0da2f4c8a647a9b48d9083
   - enabled: 1
     path: Assets/Scenes/LevelsScene.unity
     guid: 5137796e9ea422e478fee83e77f08955
   - enabled: 1
     path: Assets/Scenes/SettingsScene.unity
     guid: d1c92726b39b4a241b7b78200db79ae2
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level_tutorial_1.unity
+    guid: b0bf7a9b48a83394db6f8593b014b33b
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level_tutorial_2.unity
+    guid: 312eda37c32f2ef4780465b3f7492dfa
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level_tutorial_3.unity
+    guid: 5784c095fc19ad2408fed2b967e23bcc
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level_tutorial_4.unity
+    guid: 91b1ce1c4f784b54a82ef88efbf17f4f
+  - enabled: 1
+    path: Assets/Scenes/_unload.unity
+    guid: 74c911eb1a4eb064b8d3acb442a25dce
   m_configObjects: {}
