@@ -11,9 +11,10 @@ public class TurtleController : MonoBehaviour
     [Tooltip("Make sure this is a child with the same name \n" +
         "This will search automatically if not assigned")]
     public Transform groundCheck;
+    [Tooltip("Enable the input from the player")]
+    public bool CurrentlyActive = true;
     [Tooltip("turn gravity on or off, best used by scripts")]
     public bool useGravity;
-
     [Tooltip("Movement speed of the character")]
     public float speed = 10f;
     [SerializeField][Tooltip("Mass of the character")]
@@ -65,11 +66,15 @@ public class TurtleController : MonoBehaviour
             velocity.y = -groundAttraction;
         }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        if (CurrentlyActive) // we want the player to only move while its the selected turtle
+        {
+            float x = Input.GetAxis("Horizontal");
+            float z = Input.GetAxis("Vertical");
 
-        Move(x, z);
-        CheckLastDirection(x,z);
+            Move(x, z);
+            CheckLastDirection(x, z);
+        }
+        //the rotation of the character should go on even after a switch
         RotateToDirection();
 
 
@@ -84,6 +89,8 @@ public class TurtleController : MonoBehaviour
         {
             velocity.y += gravityMul * -9.81f * Time.deltaTime;
         }
+
+        //after all calculations, we move the player object.
         controller.Move(velocity * Time.deltaTime);
         
     }
@@ -165,7 +172,7 @@ public class TurtleController : MonoBehaviour
         }
     }
 
-    int CameraFacing()
+    public int CameraFacing()
     {
         //determine the cardinal direction of the camera
         //0 offset fo camera facing N, 1 offset for camera facing East, etc.
