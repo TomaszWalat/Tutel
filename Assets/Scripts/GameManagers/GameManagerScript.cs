@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
+    // Cross fade
     [SerializeField]
     Animator transition;
-
     [SerializeField]
     float transitionTime = 1.0f;
 
@@ -23,15 +23,20 @@ public class GameManagerScript : MonoBehaviour
     Scene currentScene;
 
     [SerializeField]
-    bool isLoadingScene;
-    [SerializeField]
-    string preloadedSceneName;
-    [SerializeField]
-    AsyncOperation preloadedScene;
+    ScreenManagerScript currentScreenManager;
 
+    [SerializeField]
+    bool isLoadingScene;
+
+    [SerializeField]
+    string partloadedSceneName;
+    [SerializeField]
+    AsyncOperation partloadedScene;
 
     [SerializeField]
     bool allDataLoaded;
+
+    // Deserialisation example flags
     [SerializeField]
     bool test1DataLoaded;
     [SerializeField]
@@ -59,8 +64,8 @@ public class GameManagerScript : MonoBehaviour
     void Start()
     {
         isLoadingScene = false;
-        preloadedSceneName = "";
-        preloadedScene = null;
+        partloadedSceneName = "";
+        partloadedScene = null;
 
         sceneStack = new Stack<string>();
 
@@ -157,13 +162,14 @@ public class GameManagerScript : MonoBehaviour
     {
         if (allDataLoaded)
         {
-            TryLoadScene("SampleScene");
+            TryLoadScene("MainMenuScene");
         }
     }
     public void QuitGame()
     {
         TryLoadScene("_unload");
     }
+    // --- End of button OnClick() functionality --- //
 
     private bool TryLoadScene(string sceneName)
     {
@@ -194,7 +200,7 @@ public class GameManagerScript : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        while(preloadedScene.progress < 0.9f)
+        while(partloadedScene.progress < 0.9f)
         {
             yield return new WaitForFixedUpdate();
         }
@@ -213,15 +219,15 @@ public class GameManagerScript : MonoBehaviour
 
             yield return new WaitForSeconds(transitionTime);
 
-            preloadedScene.allowSceneActivation = true;
+            partloadedScene.allowSceneActivation = true;
 
-            while(!preloadedScene.isDone)
+            while(!partloadedScene.isDone)
             {
                 yield return new WaitForEndOfFrame();
             }
 
-            preloadedScene = null;
-            preloadedSceneName = "";
+            partloadedScene = null;
+            partloadedSceneName = "";
 
             yield return new WaitForEndOfFrame(); // wait a frame to make sure ambient lighting has a chance to switch over
 
@@ -244,7 +250,8 @@ public class GameManagerScript : MonoBehaviour
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
-        preloadedScene = asyncLoad;
+        partloadedScene = asyncLoad;
+        partloadedSceneName = sceneName;
 
         asyncLoad.allowSceneActivation = false;
 
@@ -277,6 +284,27 @@ public class GameManagerScript : MonoBehaviour
         // Can execute more after scene is unloaded if needed
     }
 
+    IEnumerator FindScreenManager()
+    {
+
+        while(SceneManager.sceneCount > 1)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        GameObject screenManagerObject = GameObject.Find("ScreenManager");
+
+        if(screenManagerObject != null)
+        {
+            if(screenManagerObject.TryGetComponent(out ScreenManagerScript smScript))
+            {
+                currentScreenManager = smScript;
+
+                currentScreenManager.AttachGameManager(this);
+            }
+        }
+    }
+
     private void ExitApplication()
     {
 
@@ -300,7 +328,7 @@ public class GameManagerScript : MonoBehaviour
         }
 
         StartCoroutine(UnloadLoadSceneInBackground(current.name));
-
+        StartCoroutine(FindScreenManager());
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

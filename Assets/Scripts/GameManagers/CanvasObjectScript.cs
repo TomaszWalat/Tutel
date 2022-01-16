@@ -7,7 +7,7 @@ public class CanvasObjectScript : MonoBehaviour
     // Script for toggling a UI on/off
 
     [SerializeField]
-    UIManagerScript parent;
+    ScreenManagerScript screenManager;
 
     [SerializeField]
     Canvas uiCanvas;
@@ -17,7 +17,7 @@ public class CanvasObjectScript : MonoBehaviour
 
     private void Awake()
     {
-        if(uiCanvas != null)
+        if (uiCanvas != null)
         {
             uiCanvas.gameObject.SetActive(false);
         }
@@ -26,11 +26,11 @@ public class CanvasObjectScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (parent != null)
+        if (screenManager != null)
         {
             if (uiCanvas != null)
             {
-                parent.AttachUI(this.gameObject);
+                screenManager.AttachUI(this.gameObject);
             }
         }
     }
