@@ -21,11 +21,13 @@ public class PauseControl
     public void PauseGame()
     {
         isGamePause = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void ResumeGame()
     {
         isGamePause = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public bool IsGamePaused()
