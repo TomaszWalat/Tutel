@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TurtleController : MonoBehaviour
 {
+    [Tooltip("Do not change, this is set by the turtle manager\n" +
+        "it shows the order to swap between the turtles")]
+    public int characterIndex; 
     [Tooltip("The main camera in the scene to take offset from")]
     public Camera mainCam;
     [Tooltip("The character controller on the same object")]
@@ -12,9 +15,12 @@ public class TurtleController : MonoBehaviour
         "This will search automatically if not assigned")]
     public Transform groundCheck;
     [Tooltip("Enable the input from the player")]
-    public bool CurrentlyActive = true;
+    public bool currentlyActive = true;
     [Tooltip("turn gravity on or off, best used by scripts")]
     public bool useGravity;
+
+    [Space(20)]
+
     [Tooltip("Movement speed of the character")]
     public float speed = 10f;
     [SerializeField][Tooltip("Mass of the character")]
@@ -66,23 +72,22 @@ public class TurtleController : MonoBehaviour
             velocity.y = -groundAttraction;
         }
 
-        if (CurrentlyActive) // we want the player to only move while its the selected turtle
+        if (currentlyActive) // we want the player to only move while its the selected turtle
         {
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
 
             Move(x, z);
             CheckLastDirection(x, z);
+
+            //jumping logic
+            if (Input.GetButtonDown("Jump") && isGrounded)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityMul * -9.81f);
+            }
         }
         //the rotation of the character should go on even after a switch
         RotateToDirection();
-
-
-        //jumping logic
-        if(Input.GetButtonDown("Jump") && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityMul * -9.81f);
-        }
 
         //disable gravity if the boolean is false, used for scripting
         if (useGravity)

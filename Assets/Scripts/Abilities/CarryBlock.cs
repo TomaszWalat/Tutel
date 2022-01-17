@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class CarryBlock : MonoBehaviour,Ability
+public class CarryBlock : Ability
 {
     //This is my push script but modified to pick up instead.
     //Grab range is how far the ray cast detects anything || The rayOffset ofsets the ray from the player's centre || The height offset controls how high the block is held above the character || Collision stores where the hit was for the debug gizmo
