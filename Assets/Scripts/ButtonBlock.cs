@@ -13,6 +13,14 @@ public class ButtonBlock : MonoBehaviour, IInteractable
     [SerializeField]
     float timeDelay = 0.2f;
 
+    [SerializeField]
+    GameObject modelActiveted;
+    [SerializeField]
+    GameObject modelDeactiveted;
+
+    [SerializeField]
+    buttonFX buttonSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +35,11 @@ public class ButtonBlock : MonoBehaviour, IInteractable
 
     private void Activate()
     {
+        buttonSound.ClickSound();
+        
+        modelDeactiveted.SetActive(false);
+        modelActiveted.SetActive(true);
+
         goalObjectScript.SetGoalState(true);
 
         StartCoroutine(StartTimer(timeDelay));
@@ -34,6 +47,9 @@ public class ButtonBlock : MonoBehaviour, IInteractable
 
     private void Deactivate()
     {
+        modelDeactiveted.SetActive(true);
+        modelActiveted.SetActive(false);
+
         goalObjectScript.SetGoalState(false);
 
         IsActive = false;
@@ -62,5 +78,17 @@ public class ButtonBlock : MonoBehaviour, IInteractable
         get { return isActive; }
 
         private set { isActive = value; }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //if(other.tag == "")
+        //{
+        if (!isActive)
+        {
+            Interact();
+        }
+        Debug.Log("BUtton active");
+        //}
     }
 }
