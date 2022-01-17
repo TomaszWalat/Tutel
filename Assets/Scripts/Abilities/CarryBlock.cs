@@ -10,7 +10,7 @@ public class CarryBlock : Ability
     [Header("Grab detection")]
     public float grabRange = 2f;
     public Vector3 rayOffset = new Vector3(0f, -0.5f, 0f);
-    public Vector3 grabPoint = Vector3.zero;
+    Vector3 grabPoint = Vector3.zero;
 
     [Header("Drop detection")]
     public Vector3 checkBoxSize = new Vector3(1f, 0.5f, 1f);
@@ -21,21 +21,24 @@ public class CarryBlock : Ability
     public Vector3 dropHeightOffset = new Vector3(0f, -0.25f, 0);
     bool currentlyCarrying = false;
     string childName = "";
+    Transform carryBlock;
     
     //MAY NEED CHANGES FOR A DIFFERENT MOVEMENT SCRIPT
     [Header("Player control")]
     public bool slowEnabled = true;
     public float percentageSlowdown = 0.5f;
-    //Movement movementScript;
+    TurtleController movementScript;
     float startingSpeed;
     float startingRotSpeed;
+    int carryLayer;
 
     void Start()
     {
-        ////Initialises the variables needed for the slow down
-        //movementScript = gameObject.GetComponent<Movement>();
-        //startingSpeed = movementScript.speed;
-        //startingRotSpeed = movementScript.rotSpeed;
+        //Initialises the variables needed for the slow down
+        movementScript = transform.parent.GetComponent<TurtleController>();
+        startingSpeed = movementScript.speed;
+        startingRotSpeed = movementScript.rotSpeed;
+        carryLayer = LayerMask.NameToLayer("carryLayer");
     }
 
     // Update is called once per frame
@@ -47,7 +50,7 @@ public class CarryBlock : Ability
             //Casts a ray to see if something is hit,
             var ray = new Ray(transform.position + rayOffset, transform.forward);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, grabRange))
+            if (Physics.Raycast(ray, out hit,  grabRange, carryLayer))
             {
                 //Moves the green gizmo sphere to where the raycast hit
                 grabPoint = hit.point;
@@ -55,26 +58,17 @@ public class CarryBlock : Ability
                 //Checks if player is carrying anythign then if the block hit has the correct tag
                 if (currentlyCarrying == false)
                 {
-                    if (hit.transform.gameObject.tag == "carryBlock")
-                    {
-                        Debug.Log("Hit the carry block");
-                        //Determines the direction of the player from where the raycast hit
-                        //Determines the direction the block should be pushed using the player's direction and the raycast point 
-                        Vector3 playerDir = hit.point - transform.position;
-                        Vector3 reflection = Vector3.Reflect(playerDir, hit.normal);
+                    childName = hit.transform.gameObject.name;
+                    Debug.Log(childName);
+                    //PUT ANIMATION HERE
 
-                        //PUT ANIMATION HERE
+                    //Parents the block to the player then puts it above their head, it also makes sure they're rotated the right way as well as storing their hirearchy name for later
+                    currentlyCarrying = true;
+                    hit.transform.position = transform.position + new Vector3(0, holdHeight, 0);
+                    hit.transform.rotation = transform.rotation;
+                    carryBlock = hit.transform;
 
-                        //Parents the block to the player then puts it above their head, it also makes sure they're rotated the right way as well as storing their hirearchy name for later
-                        currentlyCarrying = true;
-                        hit.transform.position = transform.position + new Vector3(0, holdHeight, 0);
-                        hit.transform.parent = transform.transform;
-                        hit.transform.rotation = transform.rotation;
-
-                        childName = hit.transform.gameObject.name;
-
-                        changePlayerSpeed();
-                    }
+                    changePlayerSpeed();
                 }
                 else
                 {
@@ -97,22 +91,29 @@ public class CarryBlock : Ability
                 {
                     //Draws the gizmo in front of the player
                     Debug.Log("Clear to drop");
-                    dropPoint = transform.position + (transform.forward + dropHeightOffset);
+                    dropPoint = transform.parent.position + (transform.forward + dropHeightOffset);
 
                     //PUT ANIMATION HERE
 
-                    //Retrieves the transform of the carry block, sets its parent to none and then places it in front of the player with a height offset & resets the currentlyCarrying bool
-                    Transform carryBlock = transform.Find(childName);
-                    carryBlock.parent = null;
-                    carryBlock.transform.position = transform.position + (transform.forward + dropHeightOffset);
-
+                    //Places carry block in front of the player with a height offset & resets the currentlyCarrying bool & carryblock variable.
                     currentlyCarrying = false;
+                    carryBlock.transform.position = transform.parent.position + (transform.forward + dropHeightOffset);
+                    carryBlock = null;
 
                     changePlayerSpeed();
                 }
             }
         }
 
+    }
+
+    private void FixedUpdate()
+    {
+        if (currentlyCarrying)
+        {
+            carryBlock.transform.position = transform.position + new Vector3(0, holdHeight, 0);
+            carryBlock.rotation = transform.rotation;
+        }
     }
 
     private void changePlayerSpeed()
@@ -122,13 +123,13 @@ public class CarryBlock : Ability
         {
             if(currentlyCarrying == true)
             {
-                //movementScript.speed = startingSpeed * percentageSlowdown;
-                //movementScript.rotSpeed = startingRotSpeed * percentageSlowdown;
+                movementScript.speed = startingSpeed * percentageSlowdown;
+                movementScript.rotSpeed = startingRotSpeed * percentageSlowdown;
             }
             else
             {
-                //movementScript.speed = startingSpeed;
-                //movementScript.rotSpeed = startingRotSpeed;
+                movementScript.speed = startingSpeed;
+                movementScript.rotSpeed = startingRotSpeed;
             }
         }
     }
@@ -136,6 +137,10 @@ public class CarryBlock : Ability
     //Draws a green sphere gizmo for debugging
     private void OnDrawGizmos()
     {
+        var ray = new Ray(transform.position + rayOffset, transform.forward);
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(ray);
+
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(grabPoint, 0.2f);
 
