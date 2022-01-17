@@ -140,6 +140,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6617592262666232264, guid: e7b0edf9367ef7644854e0ee507a1b3b, type: 3}
+      propertyPath: screenManager
+      value: 
+      objectReference: {fileID: 459885332}
     - target: {fileID: 6786244558187092672, guid: e7b0edf9367ef7644854e0ee507a1b3b, type: 3}
       propertyPath: m_RootOrder
       value: 1

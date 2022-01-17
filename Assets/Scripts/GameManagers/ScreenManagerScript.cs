@@ -44,13 +44,23 @@ public class ScreenManagerScript : MonoBehaviour
     void Start()
     {
         startingUI.EnableUI();
-        sceneName = gameManager.GetCurrentSceneName();
+        StartCoroutine(Load());
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    IEnumerator Load()
+    {
+        while(gameManager == null)
+        {
+            yield return new WaitForFixedUpdate(); 
+        }
+
+        sceneName = gameManager.GetCurrentSceneName();
     }
 
     public void GoToMenu(string ui)
@@ -76,15 +86,15 @@ public class ScreenManagerScript : MonoBehaviour
                     break;
 
                 case "Level_tutorial_2":
-                    gameManager.GoToScene("Level_tutorial_2");
+                    //gameManager.GoToScene("Level_tutorial_2");
                     break;
 
                 case "Level_tutorial_3":
-                    gameManager.GoToScene("Level_tutorial_3");
+                    //gameManager.GoToScene("Level_tutorial_3");
                     break;
 
                 case "Level_tutorial_4":
-                    gameManager.GoToScene("Level_tutorial_4");
+                    //gameManager.GoToScene("Level_tutorial_4");
                     break;
 
                 case "PauseMenu":

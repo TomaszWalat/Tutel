@@ -6,24 +6,50 @@ public class LevelManagerScript : GoalObjectScript
 {
     // Script for level/gameplay related stuff
 
-    private enum LevelState { Loading, Ready, InProgress, Paused, Failed, Complete }
+    public enum LevelState { Loading, Ready, InProgress, Paused, Failed, Complete }
 
+    [SerializeField]
     ScreenManagerScript screenManager;
 
     [SerializeField]
     LevelState state = LevelState.Loading;
 
+    bool isPaused;
+
     // Start is called before the first frame update
     void Start()
     {
-
-
+        StartCoroutine(Load());
+        isPaused = false;
+       // state = LevelState.Loading;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (Input.GetKey(KeyCode.P))
+        {
+            //if (state == LevelState.InProgress || state == LevelState.Ready)
+            //{
+            //    state = LevelState.Paused;
+            //    screenManager.GoToMenu("PauseMenu");
+            //}
+            //else if(state == LevelState.Paused)
+            //{
+            //    state = LevelState.InProgress;
+            //    screenManager.GoToMenu("ResumeLevel");
+            //} 
+            if (!isPaused)
+            {
+                isPaused = true;
+                screenManager.GoToMenu("PauseMenu");
+            }
+            else if(isPaused)
+            {
+                screenManager.GoToMenu("ResumeLevel");
+                isPaused = false;
+            }
+        }
     }
 
     public string GetState()
