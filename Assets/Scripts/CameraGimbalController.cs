@@ -49,7 +49,7 @@ public class CameraGimbalController : MonoBehaviour
     private float rotationRadius;
 
     [SerializeField]
-    private float startingRadius = 10f;
+    private float startingRadius = -10.0f;
 
     [SerializeField] [Tooltip("Furthest the gimbal can move forward - acts as maximum distance from anchor if positive, minimum if negative")]
     private float rotRadiusCapForward;
@@ -91,7 +91,7 @@ public class CameraGimbalController : MonoBehaviour
         m_transform = gameObject.transform;
 
         rotationRadius = 0.0f; // Reset any value input through editor
-        UpdateRadius(-startingRadius); // Default value - temporary
+        UpdateRadius(startingRadius); // Starting value
     }
 
     void FixedUpdate()
@@ -289,7 +289,7 @@ public class CameraGimbalController : MonoBehaviour
     private void UpdateRadius(float radiusDelta)
     {
         // Change radius if in bounds
-        if (rotRadiusCapBackward < (rotationRadius + radiusDelta) && (rotationRadius + radiusDelta) < rotRadiusCapForward)
+        if (rotRadiusCapBackward <= (rotationRadius + radiusDelta) && (rotationRadius + radiusDelta) <= rotRadiusCapForward)
         {
             // Move gimbal
             m_transform.Translate(Vector3.forward * radiusDelta, Space.Self);
