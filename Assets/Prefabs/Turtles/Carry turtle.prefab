@@ -535,6 +535,7 @@ GameObject:
   - component: {fileID: 4573260161096481780}
   - component: {fileID: 4573260161096481738}
   - component: {fileID: 4573260161096481736}
+  - component: {fileID: 3676323122490513158}
   m_Layer: 0
   m_Name: Carry turtle
   m_TagString: Untagged
@@ -623,9 +624,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a5a6be4ab8f4f43919fe2202a50136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterIndex: 0
   mainCam: {fileID: 0}
   controller: {fileID: 4573260161096481738}
   groundCheck: {fileID: 4573260161301380265}
+  currentlyActive: 1
   useGravity: 1
   speed: 2
   gravityMul: 1
@@ -638,6 +641,25 @@ MonoBehaviour:
   snapMovement: 0
   lastFaced: 0
   rotSpeed: 5
+--- !u!114 &3676323122490513158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3726185752008378023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a046199dd7875e4f859e71a0e7914ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grabRange: 2
+  rayOffset: {x: 0, y: -0.5, z: 0}
+  checkBoxSize: {x: 1, y: 0.5, z: 1}
+  holdHeight: 1
+  dropHeightOffset: {x: 0, y: -0.25, z: 0}
+  slowEnabled: 1
+  percentageSlowdown: 0.5
 --- !u!1 &3856548781000375534
 GameObject:
   m_ObjectHideFlags: 0

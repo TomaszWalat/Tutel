@@ -73,13 +73,19 @@ public class TurtleManager : MonoBehaviour
 
     private void DisablePlayer(Transform player)
     {
-        player.GetComponent<Ability>().enabled = false;
+        if (player.TryGetComponent<Ability>(out Ability ability))
+        {
+            ability.enabled = false;
+        }
         player.GetComponent<TurtleController>().currentlyActive = false;
     }
 
     private void EnablePlayer(Transform player)
     {
-        player.GetComponent<Ability>().enabled = true;
+        if (player.TryGetComponent<Ability>(out Ability ability))
+        {
+            ability.enabled = true;
+        }
         player.GetComponent<TurtleController>().currentlyActive = true;
     }
 }

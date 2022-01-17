@@ -11,6 +11,7 @@ TagManager:
   - cameraFocus
   - cameraGimbal
   - backgroundMusic
+  - climbable
   layers:
   - Default
   - TransparentFX
@@ -18,8 +19,8 @@ TagManager:
   - CameraSystem
   - Water
   - UI
-  - 
-  - 
+  - ClimberWall
+  - ClimberPlayer
   - Ground
   - 
   - 

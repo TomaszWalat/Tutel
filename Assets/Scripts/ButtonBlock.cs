@@ -11,6 +11,15 @@ public class ButtonBlock : MonoBehaviour, IInteractable
     bool isActive;
 
     [SerializeField]
+    bool isToggle;
+
+    [SerializeField]
+    bool isOneShot;
+
+    [SerializeField]
+    bool hasTimer;
+
+    [SerializeField]
     float timeDelay = 0.2f;
 
     [SerializeField]
@@ -36,9 +45,11 @@ public class ButtonBlock : MonoBehaviour, IInteractable
     private void Activate()
     {
         buttonSound.ClickSound();
-        
-        modelDeactiveted.SetActive(false);
-        modelActiveted.SetActive(true);
+
+        //modelDeactiveted.SetActive(false);
+        //modelActiveted.SetActive(true);
+
+        ButtonModelPressed(true);
 
         goalObjectScript.SetGoalState(true);
 
@@ -47,19 +58,34 @@ public class ButtonBlock : MonoBehaviour, IInteractable
 
     private void Deactivate()
     {
-        modelDeactiveted.SetActive(true);
-        modelActiveted.SetActive(false);
+        //modelDeactiveted.SetActive(true);
+        //modelActiveted.SetActive(false);
+
+        ButtonModelPressed(false);
 
         goalObjectScript.SetGoalState(false);
 
         IsActive = false;
     }
 
+    private void ButtonModelPressed(bool state)
+    {
+        modelActiveted.SetActive(state);
+        modelDeactiveted.SetActive(!state);
+    }
+
     IEnumerator StartTimer(float seconds)
     {
         yield return new WaitForSeconds(seconds);
 
-        Deactivate();
+        if (!isOneShot)
+        {
+            Deactivate();
+        }
+        else
+        {
+            ButtonModelPressed(true);
+        }
     }
 
     public bool Interact()
@@ -88,7 +114,7 @@ public class ButtonBlock : MonoBehaviour, IInteractable
         {
             Interact();
         }
-        Debug.Log("BUtton active");
+        Debug.Log("Button active");
         //}
     }
 }
