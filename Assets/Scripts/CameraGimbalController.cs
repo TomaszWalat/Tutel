@@ -48,6 +48,9 @@ public class CameraGimbalController : MonoBehaviour
     [SerializeField] [Tooltip("(VIEW ONLY) The radius of the gimbal's rotation sphere (i.e. distance from the anchor). Negative distance inverts the X and Y caps")]
     private float rotationRadius;
 
+    [SerializeField]
+    private float startingRadius = 10f;
+
     [SerializeField] [Tooltip("Furthest the gimbal can move forward - acts as maximum distance from anchor if positive, minimum if negative")]
     private float rotRadiusCapForward;
 
@@ -61,6 +64,9 @@ public class CameraGimbalController : MonoBehaviour
 
     void Start()
     {
+        // --- lock the mouse for camera controls --- //
+        Cursor.lockState = CursorLockMode.Locked;
+
         // --- anchorPoint validation --- //
         Debug.Assert( (anchorPoint != null), "anchorPoint object is not set");
 
@@ -85,7 +91,7 @@ public class CameraGimbalController : MonoBehaviour
         m_transform = gameObject.transform;
 
         rotationRadius = 0.0f; // Reset any value input through editor
-        UpdateRadius(-10.0f); // Default value - temporary
+        UpdateRadius(-startingRadius); // Default value - temporary
     }
 
     void FixedUpdate()
@@ -165,6 +171,20 @@ public class CameraGimbalController : MonoBehaviour
 
     void LateUpdate()
     {
+        float x = Input.GetAxis("Mouse X");
+        float y = Input.GetAxis("Mouse Y");
+        /*
+        float x = Input.GetAxis("CamHorizontal");
+        float y = Input.GetAxis("CamVertical");
+        */
+        RotateBy(y * rotationSpeedY, x * rotationSpeedX);
+
+        // --- The Updateradius is a pc only feature --- //
+
+        float z = Input.GetAxis("Mouse ScrollWheel");
+
+        UpdateRadius(0.1f * z);
+        /*
         // --- Input detection --- //
         // Temporary - final build should handle input better
         if (Input.GetKey("right"))
@@ -193,6 +213,7 @@ public class CameraGimbalController : MonoBehaviour
         {
             UpdateRadius(-0.1f);
         }
+        */
     }
 
     /// <summary>
