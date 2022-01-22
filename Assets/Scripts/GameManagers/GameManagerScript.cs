@@ -169,10 +169,10 @@ public class GameManagerScript : MonoBehaviour
 
         allDataLoaded = test1DataLoaded && test2DataLoaded && test3DataLoaded;
 
-        //if (allDataLoaded)
-        //{
-        //    TryLoadScene("MainMenuScene");
-        //}
+        if (allDataLoaded)
+        {
+            TryLoadScene("MainMenuScene");
+        }
     }
     // ----- End of deserialisation example ----- //
 
