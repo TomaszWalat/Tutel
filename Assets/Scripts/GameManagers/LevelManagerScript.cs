@@ -27,7 +27,7 @@ public class LevelManagerScript : GoalObjectScript
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             //if (state == LevelState.InProgress || state == LevelState.Ready)
             //{
